@@ -40,7 +40,7 @@ exe = EXE(
     a.binaries,
     a.zipfiles,
     a.datas,
-    name='mangotango_exe',
+    name='mangotango.exe',
     debug=False,
     strip=True,
     upx=True,

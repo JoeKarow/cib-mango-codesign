@@ -49,7 +49,7 @@ app = BUNDLE(
     exe,
     name='mangotango',
     debug=False,
-    icon='mango.icns,
+    icon='mango.icns',
     strip=True,
     upx=True,
 )

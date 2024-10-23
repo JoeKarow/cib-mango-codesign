@@ -42,8 +42,6 @@ jobs:
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
-            name: Inspect the dist/ directory before moving the app
-            run: ls -l dist
             move_command: mv dist/mangotango.app dist/mangotango_macos_15.app
             sha_command: shasum -a 1 dist/mangotango_macos_15.app > dist/mangotango_macos_15.app.sha1
             list_command: ls -ll dist
@@ -96,6 +94,9 @@ jobs:
         run: |
           pyinstaller pyinstaller.spec  # Update this to your .spec file name
 
+
+      - name: Inspect the dist/ directory before moving the app
+        run: ls -l dist
       - name: Rename the executable to include platform suffix
         run: ${{ matrix.move_command }}
 

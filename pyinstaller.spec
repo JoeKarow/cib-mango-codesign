@@ -5,6 +5,8 @@ from PyInstaller.utils.hooks import copy_metadata
 
 block_cipher = None
 
+platform = os.name
+
 a = Analysis(
     ['mangotango.py'],  # Entry point
     pathex=['.'],
@@ -30,12 +32,28 @@ a = Analysis(
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-# Create the macOS application bundle
-app = BUNDLE(
-    exe,
-    name='mangotango',
-    debug=False,
-    icon='mango.icns',
-    strip=True,
-    upx=True,
-)
+
+if platform == 'nt':
+    # Create the executable for Windows
+    exe = EXE(
+        pyz,
+        a.scripts,
+        a.binaries,
+        a.zipfiles,
+        a.datas,
+        name='mangotango_exe',
+        debug=False,
+        strip=True,
+        upx=True,
+        console=True  # Change to False if you don't want a console window
+    )
+else:
+    # Create the macOS application bundle
+    app = BUNDLE(
+        exe,
+        name='mangotango',
+        debug=False,
+        icon='mango.icns',
+        strip=True,
+        upx=True,
+    )

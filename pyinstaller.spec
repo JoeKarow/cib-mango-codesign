@@ -30,20 +30,6 @@ a = Analysis(
 
 pyz = PYZ(a.pure, a.zipped_data, cipher=block_cipher)
 
-# Create the executable for Windows
-exe = EXE(
-    pyz,
-    a.scripts,
-    a.binaries,
-    a.zipfiles,
-    a.datas,
-    name='mangotango_exe',
-    debug=False,
-    strip=True,
-    upx=True,
-    console=True  # Change to False if you don't want a console window
-)
-
 # Create the macOS application bundle
 app = BUNDLE(
     exe,

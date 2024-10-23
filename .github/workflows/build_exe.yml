@@ -24,26 +24,26 @@ jobs:
           - platform_name: MacOS 12
             artifact_name: macos-12
             os: macos-12
-            move_command: mv dist/mangotango dist/mangotango_macos_12
-            sha_command: shasum -a 1 dist/mangotango_macos_12 > dist/mangotango_macos_12.sha1
+            move_command: mv dist/mangotango.app dist/mangotango_macos_12.app
+            sha_command: shasum -a 1 dist/mangotango_macos_12.app > dist/mangotango_macos_12.app.sha1
             list_command: ls -ll dist
           - platform_name: MacOS 13
             artifact_name: macos-13
             os: macos-13
-            move_command: mv dist/mangotango dist/mangotango_macos_13
-            sha_command: shasum -a 1 dist/mangotango_macos_13 > dist/mangotango_macos_13.sha1
+            move_command: mv dist/mangotango.app dist/mangotango_macos_13.app
+            sha_command: shasum -a 1 dist/mangotango_macos_13.app > dist/mangotango_macos_13.app.sha1
             list_command: ls -ll dist
           - platform_name: MacOS 14
             artifact_name: macos-14
             os: macos-14
-            move_command: mv dist/mangotango dist/mangotango_macos_14
-            sha_command: shasum -a 1 dist/mangotango_macos_14 > dist/mangotango_macos_14.sha1
+            move_command: mv dist/mangotango.app dist/mangotango_macos_14.app
+            sha_command: shasum -a 1 dist/mangotango_macos_14.app > dist/mangotango_macos_14.app.sha1
             list_command: ls -ll dist
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
-            move_command: mv dist/mangotango dist/mangotango_macos_15
-            sha_command: shasum -a 1 dist/mangotango_macos_15 > dist/mangotango_macos_15.sha1
+            move_command: mv dist/mangotango.app dist/mangotango_macos_15.app
+            sha_command: shasum -a 1 dist/mangotango_macos_15.app > dist/mangotango_macos_15.app.sha1
             list_command: ls -ll dist
 
     name: Build ${{ matrix.platform_name }}
@@ -92,7 +92,7 @@ jobs:
 
       - name: Build the executable
         run: |
-          pyinstaller pyinstaller.spec
+          pyinstaller pyinstaller.spec  # Update this to your .spec file name
 
       - name: Rename the executable to include platform suffix
         run: ${{ matrix.move_command }}
@@ -108,7 +108,8 @@ jobs:
         with:
           name: ${{ matrix.artifact_name }}
           path: |
-            dist/*
+            dist/*.app
+            dist/*.exe
 
   release:
     needs: build

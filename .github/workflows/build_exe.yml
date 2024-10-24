@@ -94,6 +94,11 @@ jobs:
         run: |
           pyinstaller pyinstaller.spec
 
+
+      - name: Set executable permissions (macOS)
+        if: startsWith(matrix.os, 'macos')
+        run: chmod a+x dist/mangotango 
+
       - name: Rename the executable to include platform suffix
         run: ${{ matrix.move_command }}
 

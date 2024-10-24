@@ -95,7 +95,7 @@ jobs:
           pyinstaller pyinstaller.spec
 
 
-      - name: Set executable permissions (macOS)
+      - name: Set executable permissions (macOS) #comment for commit
         if: startsWith(matrix.os, 'macos')
         run: chmod a+x dist/mangotango 
 

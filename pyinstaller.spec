@@ -44,7 +44,7 @@ exe = EXE(
     debug=False,
     strip=True,
     upx=True,
-    console=True  # Change to False if you don't want a console window
+    console=True  
 )
 # Create the macOS application bundle
 app = BUNDLE(

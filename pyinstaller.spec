@@ -1,11 +1,12 @@
 # pyinstaller.spec
 
 import os
+import platform
 from PyInstaller.utils.hooks import copy_metadata
 
 block_cipher = None
 
-platform = os.name
+#platform = os.name
 
 a = Analysis(
     ['mangotango.py'],  # Entry point
@@ -46,12 +47,13 @@ exe = EXE(
     upx=True,
     console=True  
 )
-# Create the macOS application bundle
-app = BUNDLE(
-    exe,
-    name='mangotango.app',
-    debug=False,
-    icon='mango.icns',
-    strip=True,
-    upx=True,
-)
+if platform.system() == 'Darwin' :
+    # Create the macOS application bundle
+    app = BUNDLE(
+        exe,
+        name='mangotango.app',
+        debug=False,
+        icon='mango.icns',
+        strip=True,
+        upx=True,
+    )

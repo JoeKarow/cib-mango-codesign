@@ -108,26 +108,9 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.artifact_name }}
-          if: ${{ matrix.artifact_name == 'windows'}}
           path: |
+            dist/*.app
             dist/*.exe
-
-          if: ${{ matrix.artifact_name == 'macos-12'}}
-          path: |
-            dist/*.app
-            
-          if: ${{ matrix.artifact_name == 'macos-13'}}
-          path: |
-            dist/*.app
-
-          if: ${{ matrix.artifact_name == 'macos-14'}}
-          path: |
-            dist/*.app
-
-          if: ${{ matrix.artifact_name == 'macos-15'}}
-          path: |
-            dist/*.app
-
 
   release:
     needs: build

@@ -69,6 +69,8 @@ jobs:
         
         # Run tests using pytest
       - name: Run pytest
+        env:
+            PYTHONPATH: ${{ github.workspace }}
         run: |
           pip install pytest
           # Run pytest with verbose output

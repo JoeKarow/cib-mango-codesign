@@ -106,7 +106,7 @@ jobs:
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security import app_certificate.p12 -k build.keychain -P $APPLE_APP_CERT_PASSWORD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
-          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "mangotango" dist/mangotango
+          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "mangotango" dist/mangotango_macos_14
 
 
       - name: Inspect the dist/ directory before uploading artifacts

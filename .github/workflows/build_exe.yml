@@ -106,15 +106,15 @@ jobs:
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security import app_certificate.p12 -k build.keychain -P $APPLE_APP_CERT_PASSWORD -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
-          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_macos_14"
+          /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_macos_14"
 
           mkdir -p pkg-root/usr/local/bin
           cp dist/mangotango_macos_14 pkg-root/usr/local/bin/
           
-          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign "$INST_ID" dist/mangotango_macos_14.pkg
+          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign $INST_ID dist/mangotango_macos_14.pkg
           pkgutil --check-signature dist/mangotango_macos_14.pkg
 
-          xcrun notarytool submit dist/mangotango_macos_14.pkg --apple-id "$APPLE_DEV_EMAIL" --team-id "APPLE_TEAM_ID" --password "$APP_SPEC_PASS" --wait
+          xcrun notarytool submit dist/mangotango_macos_14.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
 
 
 

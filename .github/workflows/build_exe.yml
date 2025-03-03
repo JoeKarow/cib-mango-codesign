@@ -110,7 +110,7 @@ jobs:
           APP_ID: ${{secrets.APP_ID}}
         run: |
 
-          /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_${{matrix.os}}"
+          /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" "dist/mangotango_${{matrix.os}}"
 
       - name: Create and sign mac package
         if: runner.os == 'macOS'

@@ -85,6 +85,30 @@ jobs:
       - name: Compute the SHA1 hashsum
         run: ${{ matrix.sha_command }}
 
+      - name: Sign the Executable (macOS)
+        if: runner.os == 'macOS'
+        env: 
+          APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
+          APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
+          APPLE_APP_CERTIFICATE: ${{secrets.DEV_APP_CERT}}
+          APPLE_APP_CERT_PASSWORD: ${{secrets.DEV_APP_CERT_PASS}}
+          APPLE_INST_CERTIFICATE: ${{secrets.DEV_INST_CERT}}
+          APPLE_INST_CERT_PASSWORD: ${{secrets.DEV_INST_CERT_PASS}}
+          APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
+          APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
+          APP_ID: ${{secrets.APP_ID}}
+          INST_ID: ${{secrets.INST_ID}}
+        run: |
+          echo "$APPLE_APP_CERTIFICATE" | base64 --decode > app_certificate.p12
+          echo "$APPLE_INST_CERTIFICATE" | base64 --decode > inst_certificate.p12
+          security create-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
+          security import app_certificate.p12 -k build.keychain -P $APPLE_APP_CERT_PASSWORD -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
+          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "mangotango" dist/mangotango
+
+
       - name: Inspect the dist/ directory before uploading artifacts
         run: ${{ matrix.list_command }}
 
@@ -94,6 +118,39 @@ jobs:
           name: ${{ matrix.artifact_name }}
           path: |
             dist/*
+
+  sign:
+    needs: build
+    runs-on: macos-14
+    env: 
+      APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
+      APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
+      APPLE_APP_CERTIFICATE: ${{secrets.DEV_APP_CERT}}
+      APPLE_APP_CERT_PASSWORD: ${{secrets.DEV_APP_CERT_PASS}}
+      APPLE_INST_CERTIFICATE: ${{secrets.DEV_INST_CERT}}
+      APPLE_INST_CERT_PASSWORD: ${{secrets.DEV_INST_CERT_PASS}}
+      APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
+
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Import Apple Certificate
+        run: |
+
+
+      - name: Sign Executable
+        run: codesign --force --timestamp --options runtime --sign "$TEAM_ID" artifacts/macos-14/mangotango_macos_14
+
+      - name: Re-upload signed artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: signed-macos-14
+          path: artifacts/macos-14/*
+          
 
   release:
     needs: build

@@ -21,14 +21,14 @@ jobs:
           - platform_name: MacOS 14
             artifact_name: macos-14
             os: macos-14
-            move_command: mv dist/mangotango dist/mangotango_macos-14
-            sha_command: shasum -a 1 dist/mangotango_macos-14 > dist/mangotango_macos-14.sha1
+            move_command: mv dist/mangotango dist/mangotango_macos_14
+            sha_command: shasum -a 1 dist/mangotango_macos_14 > dist/mangotango_macos_14.sha1
             list_command: ls -ll dist
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
-            move_command: mv dist/mangotango dist/mangotango_macos-15
-            sha_command: shasum -a 1 dist/mangotango_macos-15 > dist/mangotango_macos-15.sha1
+            move_command: mv dist/mangotango dist/mangotango_macos_15
+            sha_command: shasum -a 1 dist/mangotango_macos_15 > dist/mangotango_macos_15.sha1
             list_command: ls -ll dist
 
     name: Build ${{ matrix.platform_name }}
@@ -110,7 +110,7 @@ jobs:
           APP_ID: ${{secrets.APP_ID}}
         run: |
 
-          /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" "dist/mangotango_${{matrix.os}}"
+          /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_macos_14"
 
       - name: Create and sign mac package
         if: runner.os == 'macOS'
@@ -119,8 +119,8 @@ jobs:
         run:
           mkdir -p pkg-root/usr/local/bin
           cp dist/mangotango_macos_14 pkg-root/usr/local/bin/
-          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign $INST_ID dist/mangotango_${{matrix.os}}.pkg
-          pkgutil --check-signature dist/mangotango_${{matrix.os}}.pkg
+          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign $INST_ID dist/mangotango_macos_14.pkg
+          pkgutil --check-signature dist/mangotango_macos_14.pkg
         
       - name: Notarize Mac package
         if: runner.os == 'macOS'
@@ -129,7 +129,7 @@ jobs:
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
         run:
-          xcrun notarytool submit dist/mangotango_${{matrix.os}}.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
+          xcrun notarytool submit dist/mangotango_macos_14.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
 
 
 

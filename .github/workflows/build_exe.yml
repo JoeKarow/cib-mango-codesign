@@ -113,7 +113,7 @@ jobs:
         if: runner.os == 'macOS'
         env:
           APP_ID: ${{secrets.APP_ID}}
-        run: /usr/bin/codesign --force -s $APP_ID --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_macos_14"
+        run: /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_macos_14"
 
       - name: Create and sign mac package
         if: runner.os == 'macOS'
@@ -122,7 +122,7 @@ jobs:
         run: |
           mkdir -p pkg-root/usr/local/bin
           cp dist/mangotango_macos_14 pkg-root/usr/local/bin/
-          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign $INST_ID dist/mangotango_macos_14.pkg
+          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign "$INST_ID" dist/mangotango_macos_14.pkg
           pkgutil --check-signature dist/mangotango_macos_14.pkg
         
       - name: Notarize Mac package

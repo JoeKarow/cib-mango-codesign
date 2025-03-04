@@ -118,7 +118,7 @@ jobs:
         run: |
           mkdir -p pkg-root/usr/local/bin
           cp dist/mangotango_${{matrix.os}} pkg-root/usr/local/bin/
-          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg
+          pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign "$INST_ID" --verbose dist/mangotango_${{matrix.os}}.pkg
         
       - name: Notarize Mac package
         if: runner.os == 'macOS'

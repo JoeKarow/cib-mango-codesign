@@ -129,7 +129,7 @@ jobs:
           echo "before pkgbuild"
           pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango "dist/mangotango_${{matrix.os}}.pkg"
           echo "after pkgbuild"
-          productsign --timestamp --sign $INST_ID dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
+          productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
         
       - name: Notarize Mac package
         if: runner.os == 'macOS'

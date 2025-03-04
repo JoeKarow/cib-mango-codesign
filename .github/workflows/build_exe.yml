@@ -116,10 +116,10 @@ jobs:
         env:
           INST_ID: ${{secrets.INST_ID}}
         run: |
-          mkdir -p pkg-root/usr/local/bin
+          mkdir /tmp/mangotango
           ditto dist/mangotango_${{matrix.os}} /tmp/mangotango/Applications/
           echo "before pkgbuild"
-          pkgbuild --identifier "org.mangotango.cli" --timestamp --sign "$INST_ID" --root /tmp/mangotango / "dist/mangotango_${{matrix.os}}.pkg"
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --sign "$INST_ID" --root /tmp/mangotango "dist/mangotango_${{matrix.os}}.pkg"
           echo "after pkgbuild"
         
       - name: Notarize Mac package

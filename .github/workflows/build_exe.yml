@@ -22,13 +22,13 @@ jobs:
             artifact_name: macos-14
             os: macos-14
             move_command: mv dist/mangotango dist/mangotango_macos-14
-            sha_command: shasum -a 1 dist/mangotango_macos-14 > dist/mangotango_macos_14.sha1
+            sha_command: shasum -a 1 dist/mangotango_macos-14 > dist/mangotango_macos-14.sha1
             list_command: ls -ll dist
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
             move_command: mv dist/mangotango dist/mangotango_macos-15
-            sha_command: shasum -a 1 dist/mangotango_macos-15 > dist/mangotango_macos_15.sha1
+            sha_command: shasum -a 1 dist/mangotango_macos-15 > dist/mangotango_macos-15.sha1
             list_command: ls -ll dist
 
     name: Build ${{ matrix.platform_name }}
@@ -117,7 +117,7 @@ jobs:
           INST_ID: ${{secrets.INST_ID}}
         run: |
           mkdir -p pkg-root/usr/local/bin
-          cp dist/mangotango_macos_14 pkg-root/usr/local/bin/
+          cp dist/mangotango_${{matrix.os}} pkg-root/usr/local/bin/
           pkgbuild --root pkg-root --identifier "org.mangotango.cli" --timestamp --version "1.0.0" --install-location /usr/local/bin --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg
         
       - name: Notarize Mac package

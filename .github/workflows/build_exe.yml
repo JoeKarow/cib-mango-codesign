@@ -122,9 +122,10 @@ jobs:
           ditto dist/mangotango_${{matrix.os}} /tmp/mangotango/Applications/
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
-          echo "before productbuild"
-          productbuild --identifier "org.mangotango.cli" --timestamp --sign "$INST_ID" --root /tmp/mangotango / "dist/mangotango_${{matrix.os}}.pkg"
-          echo "after productbuild"
+          echo "before pkgbuild"
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango "dist/mangotango_${{matrix.os}}.pkg"
+          echo "after pkgbuild"
+          productsign --sign $INST_ID --timestamp "dist/mangotango_${{matrix.os}}.pkg "dist/mangotango_${{matrix.os}}_signed"
         
       - name: Notarize Mac package
         if: runner.os == 'macOS'
@@ -132,7 +133,7 @@ jobs:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
-        run: xcrun notarytool submit dist/mangotango_${{matrix.os}}.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
+        run: xcrun notarytool submit dist/mangotango_${{matrix.os}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait
 
 
 

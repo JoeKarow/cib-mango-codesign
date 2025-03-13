@@ -141,10 +141,8 @@ jobs:
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
         run: xcrun notarytool submit dist/mangotango_${{matrix.os}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait > notarization_output.txt
 
-      - name: Check Notarization Status
-        run: |
-          NOTARY_UUID=$(grep -oE '[0-9a-f-]{36}' notarization_output.txt)
-          xcrun notarytool info $NOTARY_UUID --keychain-profile "notarytool-profile"
+      - name: Wait before Stapling (if needed)
+        run: sleep 60  # Give time for Apple servers to propagate notarization data
 
       - name: Staple the notarization ticket
         if: runner.os == 'macOS'

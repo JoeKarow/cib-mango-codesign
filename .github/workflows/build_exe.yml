@@ -125,12 +125,12 @@ jobs:
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
         run: |
           mkdir -p /tmp/mangotango/usr/local/bin
-          ditto dist/mangotango_${{matrix.os}} /tmp/mangotango/usr/local/bin/mangotango
-          chmod +x /tmp/mangotango/usr/local/bin/mangotango
+          ditto dist/mangotango_${{matrix.os}} /mangotango
+          chmod +x /mangotango
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
           echo "before pkgbuild"
-          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg"
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg"
           echo "after pkgbuild"
           productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
           pkgutil --check-signature dist/mangotango_${{matrix.os}}_signed.pkg
@@ -157,10 +157,6 @@ jobs:
             xcrun notarytool info "$SUBMISSION_ID" --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS
           fi
         
-          
-      - name: Wait before Stapling (if needed)
-        if: runner.os == 'macOS'
-        run: sleep 240  # Give time for Apple servers to propagate notarization data
 
       - name: Staple the notarization ticket
         if: runner.os == 'macOS'

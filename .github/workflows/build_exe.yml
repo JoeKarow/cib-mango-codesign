@@ -125,7 +125,7 @@ jobs:
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
         run: |
           mkdir /tmp/mangotango
-          cp dist/mangotango_${{matrix.os}} /tmp/mangotango/Applications/
+          ditto dist/mangotango_${{matrix.os}} /tmp/mangotango/Applications/
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
           echo "before pkgbuild"

@@ -141,7 +141,22 @@ jobs:
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
         run: xcrun notarytool submit dist/mangotango_${{matrix.os}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait > notarization_output.txt
+      
 
+      - name: Check notarization status
+        if: runner.os == 'macOS'
+        env:
+          APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
+          APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
+          APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
+        run: |
+          cat notarization_output.txt
+          SUBMISSION_ID=$(grep -o 'id: [a-z0-9\-]*' notarization_output.txt | cut -d' ' -f2)
+          if [ -n "$SUBMISSION_ID" ]; then
+            xcrun notarytool info "$SUBMISSION_ID" --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS
+          fi
+        
+          
       - name: Wait before Stapling (if needed)
         run: sleep 240  # Give time for Apple servers to propagate notarization data
 

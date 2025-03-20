@@ -159,6 +159,7 @@ jobs:
         
           
       - name: Wait before Stapling (if needed)
+        if: runner.os == 'macOS'
         run: sleep 240  # Give time for Apple servers to propagate notarization data
 
       - name: Staple the notarization ticket

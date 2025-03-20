@@ -124,13 +124,13 @@ jobs:
           INST_ID: ${{secrets.INST_ID}}
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
         run: |
-          mkdir -p /tmp/mangotango/usr/local/bin
-          ditto dist/mangotango_${{matrix.os}} /mangotango
-          chmod +x /mangotango
+          mkdir -p /mangocli
+          ditto dist/mangotango_${{matrix.os}} /mangocli
+          chmod +x /mangocli
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
           echo "before pkgbuild"
-          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg"
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /mangocli --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg"
           echo "after pkgbuild"
           productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
           pkgutil --check-signature dist/mangotango_${{matrix.os}}_signed.pkg

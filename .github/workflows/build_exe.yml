@@ -132,6 +132,7 @@ jobs:
           pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango "dist/mangotango_${{matrix.os}}.pkg"
           echo "after pkgbuild"
           productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
+          pkgutil --check-signature dist/mangotango_${{matrix.os}}_signed.pkg
         
       - name: Notarize Mac package
         if: runner.os == 'macOS'
@@ -142,7 +143,7 @@ jobs:
         run: xcrun notarytool submit dist/mangotango_${{matrix.os}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait > notarization_output.txt
 
       - name: Wait before Stapling (if needed)
-        run: sleep 60  # Give time for Apple servers to propagate notarization data
+        run: sleep 240  # Give time for Apple servers to propagate notarization data
 
       - name: Staple the notarization ticket
         if: runner.os == 'macOS'

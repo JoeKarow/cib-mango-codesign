@@ -115,7 +115,7 @@ jobs:
         env:
           APP_ID: ${{secrets.APP_ID}}
         run: |
-          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --entitlements "mango.entitlements" "dist/mangotango_${{matrix.os}}"
+          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --entitlements --options runtime "mango.entitlements" "dist/mangotango_${{matrix.os}}"
           codesign -vvv dist/mangotango_${{matrix.os}}
 
       - name: Create and sign mac package
@@ -124,7 +124,7 @@ jobs:
           INST_ID: ${{secrets.INST_ID}}
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
         run: |
-          mkdir /tmp/mangotango/usr/local/bin
+          mkdir -p /tmp/mangotango/usr/local/bin
           ditto dist/mangotango_${{matrix.os}} /tmp/mangotango/usr/local/bin/mangotango
           chmod +x /tmp/mangotango/usr/local/bin/mangotango
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain

@@ -93,7 +93,7 @@ jobs:
       - name: MacOS Codesigning Action
       # Codesigning will only trigger on my (Dean Eby) branch for security reasons for the time being
         if: (runner.os == 'macOS') && inputs.is_release && (${{github.repository}} == 'DeanEby/mango-tango-cli') 
-        uses: ./.github/workflows/mac_codesigning/action.yml
+        uses: ./.github/actions/mac-codesigning
         with:
           version: ${{matrix.os}}
         

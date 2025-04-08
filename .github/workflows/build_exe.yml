@@ -91,7 +91,7 @@ jobs:
         run: ${{ matrix.sha_command }}
 
       - name: Create macOS keychain
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' && inputs.is_release
         env: 
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}

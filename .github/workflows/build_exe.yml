@@ -96,6 +96,16 @@ jobs:
         uses: ./.github/actions/mac_codesigning
         with:
           version: ${{matrix.os}}
+          dev_email: ${{secrets.APPLE_DEV_EMAIL}}
+          key_pass: ${{secrets.APPLE_KEY_PASS}}
+          app_id: ${{secrets.APP_ID}}
+          app_spec_pass: ${{secrets.APP_SPEC_PASS}}
+          dev_app_cert: ${{secrets.DEV_APP_CERT}}
+          dev_app_cert_pass: ${{secrets.DEV_APP_CERT_PASS}}
+          dev_inst_cert: ${{secrets.DEV_INST_CERT}}
+          dev_inst_cert_pass: ${{secrets.DEV_INST_CERT_PASS}}
+          inst_id: ${{secrets.INST_ID}}
+          team_id: ${{secrets.TEAM_ID}}
         
       - name: Compute the SHA1 hashsum for macOS .pkg
         if: runner.os == 'macOS'

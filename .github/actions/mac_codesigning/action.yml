@@ -3,6 +3,36 @@ inputs:
   version:
     required: true
     type: string
+  dev_email:
+    required: true
+    type: string
+  key_pass:
+    required: true
+    type: string
+  app_id:
+    required: true
+    type: string
+  app_spec_pass:
+    required: true
+    type: string
+  dev_app_cert:
+    required: true
+    type: string
+  dev_app_cert_pass:
+    required: true
+    type: string
+  dev_inst_cert:
+    required: true
+    type: string
+  dev_inst_cert_pass:
+    required: true
+    type: string
+  inst_id:
+    required: true
+    type: string
+  team_id:
+    required: true
+    type: string
 runs:
   using: "composite"
   steps:
@@ -10,13 +40,13 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       env: 
-        APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
-        APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
-        APPLE_APP_CERTIFICATE: ${{secrets.DEV_APP_CERT}}
-        APPLE_APP_CERT_PASSWORD: ${{secrets.DEV_APP_CERT_PASS}}
-        APPLE_INST_CERTIFICATE: ${{secrets.DEV_INST_CERT}}
-        APPLE_INST_CERT_PASSWORD: ${{secrets.DEV_INST_CERT_PASS}}
-        APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
+        APPLE_DEV_EMAIL: ${{inputs.dev_email}}
+        APP_SPEC_PASS: ${{inputs.app_spec_pass}}
+        APPLE_APP_CERTIFICATE: ${{inputs.dev_app_cert}}
+        APPLE_APP_CERT_PASSWORD: ${{inputs.dev_app_cert_pass}}
+        APPLE_INST_CERTIFICATE: ${{inputs.dev_inst_cert}}
+        APPLE_INST_CERT_PASSWORD: ${{inputs.dev_inst_cert_pass}}
+        APPLE_KEYCHAIN_PASS: ${{inputs.key_pass}}
       run: |
         echo "$APPLE_APP_CERTIFICATE" | base64 --decode > app_certificate.p12
         echo "$APPLE_INST_CERTIFICATE" | base64 --decode > inst_certificate.p12
@@ -32,7 +62,7 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       env:
-        APP_ID: ${{secrets.APP_ID}}
+        APP_ID: ${{inputs.app_id}}
       run: |
         /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --options runtime --entitlements "mango.entitlements" "dist/mangotango_${{inputs.version}}"
         codesign -vvv dist/mangotango_${{inputs.version}}
@@ -41,8 +71,8 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       env:
-        INST_ID: ${{secrets.INST_ID}}
-        APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
+        INST_ID: ${{inputs.inst_id}}
+        APPLE_KEYCHAIN_PASS: ${{inputs.key_pass}}
       run: |
         mkdir -p /tmp/mangotango/
         ditto dist/mangotango_${{inputs.version}} /tmp/mangotango/mangotango
@@ -56,9 +86,9 @@ runs:
       if: runner.os == 'macOS'
       shell: bash
       env:
-        APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
-        APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
-        APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
+        APPLE_DEV_EMAIL: ${{inputs.dev_email}}
+        APPLE_TEAM_ID: ${{inputs.team_id}}
+        APP_SPEC_PASS: ${{inputs.app_spec_pass}}
       run: xcrun notarytool submit dist/mangotango_${{inputs.version}}_signed.pkg --apple-id $APPLE_DEV_EMAIL --team-id $APPLE_TEAM_ID --password $APP_SPEC_PASS --wait > notarization_output.txt
       
     - name: Staple the notarization ticket

@@ -139,11 +139,11 @@ def main(context: SecondaryAnalyzerContext):
                             COL_NGRAM_LENGTH,
                             COL_NGRAM_TOTAL_REPS,
                             COL_NGRAM_DISTINCT_POSTER_COUNT,
+                            COL_NGRAM_WORDS,
                             COL_NGRAM_REPS_PER_USER,
                             COL_AUTHOR_ID,
-                            COL_MESSAGE_SURROGATE_ID,
                         ],
-                        descending=[True, True, True, True, False, False],
+                        descending=[True, True, True, True, True, False],
                     )
                 )
                 writer.write_table(df_output.to_arrow())

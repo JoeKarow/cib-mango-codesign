@@ -112,7 +112,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
 
       - name: Sign mac executable
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
         env:
           APP_ID: ${{secrets.APP_ID}}
         run: |
@@ -120,7 +120,7 @@ jobs:
           codesign -vvv dist/mangotango_${{matrix.os}}
 
       - name: Create and sign mac package
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
         env:
           INST_ID: ${{secrets.INST_ID}}
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
@@ -134,7 +134,7 @@ jobs:
           productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
         
       - name: Notarize Mac package
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
         env:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
@@ -147,7 +147,7 @@ jobs:
           xcrun stapler staple dist/mangotango_${{matrix.os}}_signed.pkg
 
       - name: Clean up macOS Artifacts
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
         run: |
           rm -rf /tmp/mangotango
           rm -rf dist/mangotango_${{matrix.os}}
@@ -155,7 +155,7 @@ jobs:
           mv dist/mangotango_${{matrix.os}}_signed.pkg dist/mangotango_${{matrix.os}}.pkg
         
       - name: Compute the SHA1 hashsum for macOS .pkg
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
         run: ${{ matrix.sha_command }}
 
       - name: Inspect the dist/ directory before uploading artifacts

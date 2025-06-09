@@ -1,11 +1,10 @@
 name: Build Executables
 
 on:
-  workflow_call:
-    inputs:
-      is_release:
-        required: true
-        type: boolean
+  push:
+    tags:
+      - "v[0-9]+.[0-9]+.[0-9]+-?*"
+  workflow_dispatch:
 
 jobs:
   build:
@@ -19,21 +18,18 @@ jobs:
             move_command: move dist\mangotango.exe dist\mangotango_windows.exe
             sha_command: pwsh -c "Get-FileHash -Algorithm SHA1 dist\mangotango_windows.exe | Format-Table Hash -HideTableHeaders > dist\mangotango_windows.exe.sha1"
             list_command: dir dist
-            check_command: dist\mangotango_windows.exe --noop
           - platform_name: MacOS 14
             artifact_name: macos-14
             os: macos-14
             move_command: mv dist/mangotango dist/mangotango_macos-14
             sha_command: shasum -a 1 dist/mangotango_macos-14.pkg > dist/mangotango_macos-14.sha1
             list_command: ls -ll dist
-            check_command: dist/mangotango_macos-14 --noop
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
             move_command: mv dist/mangotango dist/mangotango_macos-15
             sha_command: shasum -a 1 dist/mangotango_macos-15.pkg > dist/mangotango_macos-15.sha1
             list_command: ls -ll dist
-            check_command: dist/mangotango_macos-15 --noop
 
     name: Build ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -91,7 +87,7 @@ jobs:
         run: ${{ matrix.sha_command }}
 
       - name: Create macOS keychain
-        if: runner.os == 'macOS' && inputs.is_release
+        if: runner.os == 'macOS'
         env: 
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
@@ -112,7 +108,7 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
 
       - name: Sign mac executable
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         env:
           APP_ID: ${{secrets.APP_ID}}
         run: |
@@ -120,7 +116,7 @@ jobs:
           codesign -vvv dist/mangotango_${{matrix.os}}
 
       - name: Create and sign mac package
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         env:
           INST_ID: ${{secrets.INST_ID}}
           APPLE_KEYCHAIN_PASS: ${{secrets.APPLE_KEY_PASS}}
@@ -134,7 +130,7 @@ jobs:
           productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
         
       - name: Notarize Mac package
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         env:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}
@@ -147,26 +143,21 @@ jobs:
           xcrun stapler staple dist/mangotango_${{matrix.os}}_signed.pkg
 
       - name: Clean up macOS Artifacts
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         run: |
           rm -rf /tmp/mangotango
           rm -rf dist/mangotango_${{matrix.os}}
           rm -rf dist/mangotango_${{matrix.os}}.pkg
           mv dist/mangotango_${{matrix.os}}_signed.pkg dist/mangotango_${{matrix.os}}.pkg
-        
+
       - name: Compute the SHA1 hashsum for macOS .pkg
-        if: runner.os == 'macOS' && inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         run: ${{ matrix.sha_command }}
 
       - name: Inspect the dist/ directory before uploading artifacts
         run: ${{ matrix.list_command }}
 
-      - name: Check that the executable runs
-        if: inputs.is_release == false
-        run: ${{ matrix.check_command }}
-
       - name: Upload artifacts
-        if: inputs.is_release
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}
@@ -174,3 +165,19 @@ jobs:
             dist/*
           
 
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/**/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

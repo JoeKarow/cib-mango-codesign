@@ -80,6 +80,7 @@ jobs:
           -T /usr/bin/codesign \
           -T /usr/bin/pkgbuild
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k $APPLE_KEYCHAIN_PASS build.keychain
+          security find-identity -v -p codesigning
 
 
       - name: Install dependencies

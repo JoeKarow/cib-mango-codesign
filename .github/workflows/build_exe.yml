@@ -102,7 +102,9 @@ jobs:
           keychain: build
 
       - name: Verify keychain
-        run: security find-identity -v -p codesigning
+        run: |
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k ${{ steps.keychain.outputs.keychain-password }} build.keychain
+          security find-identity -v -p codesigning
       - name: Print version string (for tag)
         id: get_version_tag
         if: ${{ github.ref_type == 'tag' }}

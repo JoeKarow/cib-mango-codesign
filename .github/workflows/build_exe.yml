@@ -20,6 +20,7 @@ jobs:
             sha_command: pwsh -c "Get-FileHash -Algorithm SHA1 dist\mangotango_windows.exe | Format-Table Hash -HideTableHeaders > dist\mangotango_windows.exe.sha1"
             list_command: dir dist
             check_command: dist\mangotango_windows.exe --noop
+            pip_cache: ~\AppData\Local\pip\Cache
           - platform_name: MacOS 14
             artifact_name: macos-14
             os: macos-14
@@ -27,6 +28,7 @@ jobs:
             sha_command: shasum -a 1 dist/mangotango_macos-14.pkg > dist/mangotango_macos-14.sha1
             list_command: ls -ll dist
             check_command: dist/mangotango_macos-14 --noop
+            pip_cache: ~/Library/Caches/pip
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
@@ -34,6 +36,7 @@ jobs:
             sha_command: shasum -a 1 dist/mangotango_macos-15.pkg > dist/mangotango_macos-15.sha1
             list_command: ls -ll dist
             check_command: dist/mangotango_macos-15 --noop
+            pip_cache: ~/Library/Caches/pip
 
     name: Build ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -47,10 +50,9 @@ jobs:
           python-version: 3.12
 
       - name: Cache dependencies
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
-          path: |
-            ~/.cache/pip
+          path: ${{ matrix.pip_cache }}
           key: ${{ matrix.os }}-pip-${{ hashFiles('requirements.txt') }}
           restore-keys: |
             ${{ matrix.os }}-pip-
@@ -113,6 +115,14 @@ jobs:
 
       - name: Rename the executable to include platform suffix
         run: ${{ matrix.move_command }}
+
+      - name: Upload intermediate build
+        if: inputs.is_release
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact_name }}-build
+          path: |
+            dist/*
 
       - name: Compute the SHA1 hashsum
         if: runner.os == 'Windows'

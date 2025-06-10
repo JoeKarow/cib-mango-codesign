@@ -57,7 +57,19 @@ jobs:
           restore-keys: |
             ${{ matrix.os }}-pip-
 
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install PyInstaller
+        run: |
+          pip install pyinstaller
+          echo "PYINST_BIN=\"$(which pyinstaller)\"" >> "$GITHUB_ENV"
+
       - name: Create macOS keychain
+        id: keychain
         if: runner.os == 'macOS' && inputs.is_release
         # env:
         #   APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
@@ -87,17 +99,10 @@ jobs:
         with:
           p12-file-base64: ${{ secrets.APPSTORE_CERTIFICATES_FILE_BASE64 }}
           p12-password: ${{ secrets.APPSTORE_CERTIFICATES_PASSWORD }}
+          keychain: build
 
       - name: Verify keychain
         run: security find-identity -v -p codesigning
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-
-      - name: Install PyInstaller
-        run: pip install pyinstaller
-
       - name: Print version string (for tag)
         id: get_version_tag
         if: ${{ github.ref_type == 'tag' }}

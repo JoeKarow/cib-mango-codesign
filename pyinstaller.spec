@@ -46,7 +46,9 @@ if sys.platform == "darwin":
         debug=False,
         strip=True,
         upx=True,  # You can set this to False if you don’t want UPX compression
-        console=True  # Set to False if you don't want a console window
+        console=True,  # Set to False if you don't want a console window
+        entitlements_file="./mango.entitlements",
+        codesign_identity="D0446E7342EBA33C03840F1D680647511B903966"
     )
 else:
     exe = EXE(

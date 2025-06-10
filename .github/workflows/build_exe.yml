@@ -129,13 +129,13 @@ jobs:
         run: ${{ matrix.sha_command }}
 
 
-      - name: Sign mac executable
-        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
-        env:
-          APP_ID: ${{secrets.APP_ID}}
-        run: |
-          /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --options runtime --entitlements "mango.entitlements" "dist/mangotango_${{matrix.os}}"
-          codesign -vvv dist/mangotango_${{matrix.os}}
+      # - name: Sign mac executable
+      #   if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
+      #   env:
+      #     APP_ID: ${{secrets.APP_ID}}
+      #   run: |
+      #     /usr/bin/codesign --force -s "$APP_ID" --timestamp -i "org.mangotango.cli" --options runtime --entitlements "mango.entitlements" "dist/mangotango_${{matrix.os}}"
+      #     codesign -vvv dist/mangotango_${{matrix.os}}
 
       - name: Create and sign mac package
         if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084

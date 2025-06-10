@@ -148,9 +148,9 @@ jobs:
           chmod +x /tmp/mangotango/mangotango
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
-          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg"
-          security find-identity -v -p codesigning build.keychain
-          productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg" --sign D0446E7342EBA33C03840F1D680647511B903966
+          # security find-identity -v -p codesigning build.keychain
+          # productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
 
       - name: Notarize Mac package
         if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084

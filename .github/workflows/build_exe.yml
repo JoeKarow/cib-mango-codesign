@@ -12,23 +12,23 @@ jobs:
     strategy:
       matrix:
         include:
-          - platform_name: Windows
-            artifact_name: windows
-            os: windows-2022
-            version_command: icacls "VERSION" /grant Everyone:F /T /C /Q
-            move_command: move dist\mangotango.exe dist\mangotango_windows.exe
-            sha_command: pwsh -c "Get-FileHash -Algorithm SHA1 dist\mangotango_windows.exe | Format-Table Hash -HideTableHeaders > dist\mangotango_windows.exe.sha1"
-            list_command: dir dist
-            check_command: dist\mangotango_windows.exe --noop
-            pip_cache: ~\AppData\Local\pip\Cache
-          - platform_name: MacOS 14
-            artifact_name: macos-14
-            os: macos-14
-            move_command: mv dist/mangotango dist/mangotango_macos-14
-            sha_command: shasum -a 1 dist/mangotango_macos-14.pkg > dist/mangotango_macos-14.sha1
-            list_command: ls -ll dist
-            check_command: dist/mangotango_macos-14 --noop
-            pip_cache: ~/Library/Caches/pip
+          # - platform_name: Windows
+          #   artifact_name: windows
+          #   os: windows-2022
+          #   version_command: icacls "VERSION" /grant Everyone:F /T /C /Q
+          #   move_command: move dist\mangotango.exe dist\mangotango_windows.exe
+          #   sha_command: pwsh -c "Get-FileHash -Algorithm SHA1 dist\mangotango_windows.exe | Format-Table Hash -HideTableHeaders > dist\mangotango_windows.exe.sha1"
+          #   list_command: dir dist
+          #   check_command: dist\mangotango_windows.exe --noop
+          #   pip_cache: ~\AppData\Local\pip\Cache
+          # - platform_name: MacOS 14
+          #   artifact_name: macos-14
+          #   os: macos-14
+          #   move_command: mv dist/mangotango dist/mangotango_macos-14
+          #   sha_command: shasum -a 1 dist/mangotango_macos-14.pkg > dist/mangotango_macos-14.sha1
+          #   list_command: ls -ll dist
+          #   check_command: dist/mangotango_macos-14 --noop
+          #   pip_cache: ~/Library/Caches/pip
           - platform_name: MacOS 15
             artifact_name: macos-15
             os: macos-15
@@ -148,8 +148,8 @@ jobs:
           chmod +x /tmp/mangotango/mangotango
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
+          security find-identity -v -p codesigning build.keychain
           pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "dist/mangotango_${{matrix.os}}.pkg" --sign D0446E7342EBA33C03840F1D680647511B903966
-          # security find-identity -v -p codesigning build.keychain
           # productsign --timestamp --sign "$INST_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
 
       - name: Notarize Mac package

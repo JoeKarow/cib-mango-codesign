@@ -21,13 +21,13 @@ jobs:
             list_command: dir dist
             check_command: dist\mangotango_windows.exe --noop
             pip_cache: ~\AppData\Local\pip\Cache
-          - platform_name: MacOS 14
-            artifact_name: macos-14
-            os: macos-14
-            move_command: mv dist/mangotango dist/mangotango_macos-14
-            sha_command: shasum -a 1 dist/mangotango_macos-14.pkg > dist/mangotango_macos-14.sha1
+          - platform_name: MacOS 13 (x86)
+            artifact_name: macos-x86
+            os: macos-13
+            move_command: mv dist/mangotango dist/mangotango_macos-13
+            sha_command: shasum -a 1 dist/mangotango_macos-13.pkg > dist/mangotango_macos-13.sha1
             list_command: ls -ll dist
-            check_command: dist/mangotango_macos-14 --noop
+            check_command: dist/mangotango_macos-13 --noop
             pip_cache: ~/Library/Caches/pip
           - platform_name: MacOS 15
             artifact_name: macos-15

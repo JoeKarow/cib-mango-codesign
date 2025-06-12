@@ -65,7 +65,7 @@ jobs:
           echo "PYINST_BIN=\"$(which pyinstaller)\"" >> "$GITHUB_ENV"
       - name: Create macOS keychain
         id: keychain
-        if: runner.os == 'macOS' && inputs.is_release
+        if: runner.os == 'macOS'
         env:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APP_SPEC_PASS: ${{secrets.APP_SPEC_PASS}}
@@ -131,7 +131,7 @@ jobs:
           # productsign --timestamp --sign "$APPLE_INST_CERT_ID" dist/mangotango_${{matrix.os}}.pkg dist/mangotango_${{matrix.os}}_signed.pkg
 
       - name: Notarize Mac package
-        if: runner.os == 'macOS' #&& inputs.is_release && ${{github.repository_id}} == 865611084
+        if: runner.os == 'macOS'
         env:
           APPLE_DEV_EMAIL: ${{secrets.APPLE_DEV_EMAIL}}
           APPLE_TEAM_ID: ${{secrets.TEAM_ID}}

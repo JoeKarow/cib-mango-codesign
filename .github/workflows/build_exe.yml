@@ -29,17 +29,17 @@ jobs:
           - platform_name: MacOS (x86)
             artifact_name: macos-x86
             os: macos-13
-            move_command: mv dist/mangotango dist/mangotango_macos_x86
-            sha_command: shasum -a 1 dist/mangotango_macos_x86 > dist/mangotango_macos_x86.sha1
+            move_command: mv dist/mangotango dist/mangotango_macos-x86
+            sha_command: shasum -a 1 dist/mangotango_macos-x86 > dist/mangotango_macos-x86.sha1
             list_command: ls -ll dist
-            check_command: dist/mangotango_macos_x86 --noop
+            check_command: dist/mangotango_macos-x86 --noop
           - platform_name: MacOS (arm64)
             artifact_name: macos-arm64
             os: macos-15
-            move_command: mv dist/mangotango dist/mangotango_macos_arm64
-            sha_command: shasum -a 1 dist/mangotango_macos_arm64 > dist/mangotango_macos_arm64.sha1
+            move_command: mv dist/mangotango dist/mangotango_macos-arm64
+            sha_command: shasum -a 1 dist/mangotango_macos-arm64 > dist/mangotango_macos-arm64.sha1
             list_command: ls -ll dist
-            check_command: dist/mangotango_macos_arm64 --noop
+            check_command: dist/mangotango_macos-arm64 --noop
 
     name: Build ${{ matrix.platform_name }}
     runs-on: ${{ matrix.os }}
@@ -127,7 +127,7 @@ jobs:
           security unlock-keychain -p $APPLE_KEYCHAIN_PASS build.keychain
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$APPLE_KEYCHAIN_PASS" build.keychain
           security find-identity -v -p codesigning build.keychain
-          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "dist/mangotango_${{matrix.artifact_name}}_signed.pkg" --sign "$APPLE_INST_CERT_ID"
+          pkgbuild --identifier "org.mangotango.cli" --timestamp --root /tmp/mangotango --install-location /Applications "./dist/mangotango_${{matrix.artifact_name}}_signed.pkg" --sign "$APPLE_INST_CERT_ID"
 
       - name: Notarize Mac package
         if: runner.os == 'macOS'

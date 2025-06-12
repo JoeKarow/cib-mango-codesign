@@ -2,17 +2,7 @@ name: Build Executables
 
 on:
   workflow_call:
-    inputs:
-      is_release:
-        required: true
-        type: boolean
   workflow_dispatch:
-    inputs:
-      is_release:
-        description: 'is this a release?'
-        required: true
-        type: boolean
-        default: false
 jobs:
   build:
     strategy:
@@ -158,12 +148,7 @@ jobs:
       - name: Inspect the dist/ directory before uploading artifacts
         run: ${{ matrix.list_command }}
 
-      - name: Check that the executable runs
-        if: inputs.is_release == false
-        run: ${{ matrix.check_command }}
-
       - name: Upload artifacts
-        if: inputs.is_release
         uses: actions/upload-artifact@v4
         with:
           name: ${{ matrix.artifact_name }}

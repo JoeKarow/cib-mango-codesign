@@ -31,6 +31,7 @@ jobs:
             os: macos-13
             move_command: mv dist/mangotango dist/mangotango_macos-x86
             sha_command: shasum -a 1 dist/mangotango_macos-x86 > dist/mangotango_macos-x86.sha1
+            sha_command_pkg: shasum -a 1 dist/mangotango_macos-x86.pkg > dist/mangotango_macos-x86.pkg.sha1
             list_command: ls -ll dist
             check_command: dist/mangotango_macos-x86 --noop
           - platform_name: MacOS (arm64)
@@ -38,6 +39,7 @@ jobs:
             os: macos-15
             move_command: mv dist/mangotango dist/mangotango_macos-arm64
             sha_command: shasum -a 1 dist/mangotango_macos-arm64 > dist/mangotango_macos-arm64.sha1
+            sha_command_pkg: shasum -a 1 dist/mangotango_macos-arm64.pkg > dist/mangotango_macos-arm64.pkg.sha1
             list_command: ls -ll dist
             check_command: dist/mangotango_macos-arm64 --noop
 
@@ -151,7 +153,7 @@ jobs:
 
       - name: Compute the SHA1 hashsum for macOS .pkg
         if: runner.os == 'macOS'
-        run: ${{ matrix.sha_command }}
+        run: ${{ matrix.sha_command_pkg }}
 
       - name: Inspect the dist/ directory before uploading artifacts
         run: ${{ matrix.list_command }}
